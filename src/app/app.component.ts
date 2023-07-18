@@ -1,22 +1,43 @@
 // app.component.ts
-import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import Pusher from 'pusher-js';
 
 interface Message {
-  username: string;
-  message: string;
+	username: string;
+	message: string;
 }
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+	selector: 'app-root',
+	templateUrl: './app.component.html',
+	styleUrls: ['./app.component.css']
 })
-export class AppComponent {
-  username = 'username';
-  message = "";
-  messages: Message[] = []; // Initialize messages array as an array of Message interface objects
+export class AppComponent implements OnInit {
+	username = 'username';
+	message = "";
+	messages: Message[] = [];
 
-  submit(): void {
-    
-  }
+	constructor(private http: HttpClient) {
+
+	}
+
+	ngOnInit(): void {
+		Pusher.logToConsole = true;
+
+		const pusher = new Pusher('1bc4ab922c74a0d8d725', {
+			cluster: 'eu'
+		});
+
+		const channel = pusher.subscribe('chat');
+		channel.bind('message', (data: Message) => {
+			this.messages.push(data)
+		});
+	}
+	submit(): void {
+		this.http.post("http://locahost:8000/api/messages", {
+			username: this.username,
+			message: this.message
+		}).subscribe(() => this.message = '');
+	}
 }
