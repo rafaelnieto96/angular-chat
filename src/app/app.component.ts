@@ -1,4 +1,10 @@
+// app.component.ts
 import { Component } from '@angular/core';
+
+interface Message {
+  username: string;
+  message: string;
+}
 
 @Component({
   selector: 'app-root',
@@ -6,5 +12,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'angular-chat';
+  username = 'username';
+  message = "";
+  messages: Message[] = []; // Initialize messages array as an array of Message interface objects
+
+  submit(): void {
+    
+  }
 }
